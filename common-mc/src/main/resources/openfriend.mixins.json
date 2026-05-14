@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "jp.zpw.openfriend.mc.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "minVersion": "0.8",
+  "refmap": "openfriend.refmap.json",
+  "client": [
+    "TitleScreenMixin",
+    "PauseScreenMixin",
+    "JoinMultiplayerScreenMixin",
+    "IntegratedServerMixin",
+    "GuiMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
