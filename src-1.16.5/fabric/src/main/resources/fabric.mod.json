@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "openfriend",
+  "version": "${version}",
+  "name": "OpenFriend",
+  "description": "Bridge the Minecraft Java Friends List (snapshot 26.2+) to any TCP server. Brings the Friends List UI to older Minecraft versions.",
+  "authors": ["ZSHARE"],
+  "contact": {
+    "homepage": "https://openfriend.net",
+    "sources": "https://github.com/zerozshare/OpenFriendMC"
+  },
+  "license": "MIT",
+  "icon": "assets/openfriend/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["jp.zpw.openfriend.fabric.OpenFriendFabricClient"]
+  },
+  "mixins": [
+    "openfriend.mixins.json"
+  ],
+  "accessWidener": "openfriend.accesswidener",
+  "depends": {
+    "fabricloader": ">=0.11.0",
+    "minecraft": "1.16.5",
+    "java": ">=8"
+  }
+}
