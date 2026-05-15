@@ -7,7 +7,8 @@
   "authors": ["ZSHARE"],
   "contact": {
     "homepage": "https://openfriend.net",
-    "sources": "https://github.com/zerozshare/OpenFriendMC"
+    "sources": "https://github.com/zerozshare/OpenFriendMod",
+    "issues": "https://github.com/zerozshare/OpenFriendMod/issues"
   },
   "license": "MIT",
   "icon": "assets/openfriend/icon.png",
