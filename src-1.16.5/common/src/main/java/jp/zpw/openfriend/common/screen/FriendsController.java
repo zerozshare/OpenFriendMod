@@ -173,11 +173,17 @@ public final class FriendsController {
             }
 
             @Override
-            public void add(String name, Consumer<Boolean> cb) {
+            public void add(String name, Consumer<Throwable> cb) {
                 ipc.requestAsync("friends.add", IpcClient.params("name", name))
                         .whenComplete((result, err) -> {
-                            if (err == null) forceRefresh();
-                            cb.accept(err == null);
+                            if (err == null) {
+                                forceRefresh();
+                            } else {
+                                String msg = err.getMessage();
+                                if (msg == null || msg.isEmpty()) msg = "Could not send request.";
+                                notice.error("Friend request to " + name + " failed", msg);
+                            }
+                            cb.accept(err);
                         });
             }
         };
