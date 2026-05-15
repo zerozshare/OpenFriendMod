@@ -83,7 +83,7 @@ public final class UTabBar extends UComponent {
                 int bx = cursorX + (w + labelW) / 2 + 2;
                 int by = y + 2;
                 r.fillRect(bx, by, bw, r.textHeight() + 2, UTheme.ACCENT);
-                r.drawTextCentered(bx, by + 1, bw, b, 0xFF000000);
+                r.drawTextCentered(bx, by + 1, bw, b, UTheme.TEXT_ON_LIGHT);
             }
             if (active) {
                 int uy = y + height - underlineThickness;

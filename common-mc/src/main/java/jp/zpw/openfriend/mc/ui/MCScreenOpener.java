@@ -80,6 +80,7 @@ public final class MCScreenOpener implements FriendsController.MultiplayBridge, 
                     .withStyle(ChatFormatting.AQUA)
                     .append(new TextComponent("Opened to LAN on port " + port + " (max " + maxPlayers + "). Bridging to your Friends list...")
                             .withStyle(ChatFormatting.WHITE)));
+            onServerPublished(port);
         } else {
             sendChat(new TextComponent("[OpenFriend] Failed to open to LAN (port " + port + ")")
                     .withStyle(ChatFormatting.RED));
@@ -87,8 +88,20 @@ public final class MCScreenOpener implements FriendsController.MultiplayBridge, 
         return ok;
     }
 
+    private volatile int lastBridgedPort = -1;
+
+
+
     public void onServerPublished(int port) {
+
+
         if (controller == null || controller.ipc() == null || !controller.ipc().isRunning()) return;
+
+
+        if (lastBridgedPort == port) return;
+
+
+        lastBridgedPort = port;
         String target = "127.0.0.1:" + port;
         OpenFriendMod.LOG.info("OpenFriend: bridging to LAN port {}", port);
         controller.ipc().requestAsync("host.start",

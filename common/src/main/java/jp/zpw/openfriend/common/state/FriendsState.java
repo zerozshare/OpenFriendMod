@@ -170,6 +170,8 @@ public final class FriendsState implements IpcListener {
 
     @Override
     public void onNotification(String method, JsonObject params) {
+        java.util.logging.Logger.getLogger("openfriend.state")
+                .info("notification received: " + method);
         boolean changed = true;
         synchronized (this) {
             switch (method) {

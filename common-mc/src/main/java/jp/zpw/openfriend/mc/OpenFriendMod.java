@@ -39,25 +39,11 @@ public final class OpenFriendMod {
     private static UUID resolveProfileId(User user) {
         if (user == null) return null;
         try {
-            java.lang.reflect.Method m = User.class.getMethod("getProfileId");
-            Object id = m.invoke(user);
-            if (id instanceof UUID) return (UUID) id;
-        } catch (Throwable ignored) {}
-        try {
-            java.lang.reflect.Method m = User.class.getMethod("getUuid");
-            Object o = m.invoke(user);
-            if (o instanceof String) {
-                String str = (String) o;
-                if (str.length() == 32) {
-                    str = str.substring(0, 8)  + "-" +
-                          str.substring(8, 12) + "-" +
-                          str.substring(12, 16) + "-" +
-                          str.substring(16, 20) + "-" +
-                          str.substring(20);
-                }
-                return UUID.fromString(str);
-            }
-        } catch (Throwable ignored) {}
+            com.mojang.authlib.GameProfile p = user.getGameProfile();
+            if (p != null) return p.getId();
+        } catch (Throwable t) {
+            LOG.warn("getGameProfile() failed: {}", t.getMessage());
+        }
         return null;
     }
 

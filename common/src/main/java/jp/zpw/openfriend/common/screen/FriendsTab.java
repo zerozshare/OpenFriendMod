@@ -83,15 +83,12 @@ public final class FriendsTab implements FriendsOverlayScreen.Tab {
         if (q.isEmpty()) return;
         addQuery = q;
         setAddState(AddFriendTab.State.SEARCHING, "Sending request to " + q + "...");
-        addActions.add(q, ok -> {
-            if (Boolean.TRUE.equals(ok)) {
-                setAddState(AddFriendTab.State.IDLE, "");
+        addActions.add(q, err -> {
+            setAddState(AddFriendTab.State.IDLE, "");
+            if (err == null) {
                 input.setText("");
                 addQuery = "";
                 notice.success("Friend request sent", "Sent request to " + q + ".");
-            } else {
-                setAddState(AddFriendTab.State.IDLE, "");
-                notice.error("Friend request failed", "Could not reach " + q + ". Check the gamertag.");
             }
         });
     }

@@ -17,7 +17,8 @@
     "client": ["jp.zpw.openfriend.fabric.OpenFriendFabricClient"]
   },
   "mixins": [
-    "openfriend.mixins.json"
+    "openfriend.mixins.json",
+    "openfriend.fabric.mixins.json"
   ],
   "accessWidener": "openfriend.accesswidener",
   "depends": {

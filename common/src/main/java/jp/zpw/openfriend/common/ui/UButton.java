@@ -31,13 +31,13 @@ public class UButton extends UComponent {
             case PRIMARY: {
                 bg     = enabled ? (hovered ? lighten(UTheme.ACCENT) : UTheme.ACCENT) : UTheme.SURFACE;
                 border = enabled ? bg : UTheme.BORDER;
-                fg     = enabled ? 0xFF000000 : UTheme.TEXT_FAINT;
+                fg     = enabled ? UTheme.TEXT_ON_LIGHT : UTheme.TEXT_FAINT;
                 break;
             }
             case DANGER: {
                 bg     = enabled ? (hovered ? lighten(UTheme.DANGER) : UTheme.DANGER) : UTheme.SURFACE;
                 border = enabled ? bg : UTheme.BORDER;
-                fg     = enabled ? 0xFFFFFFFF : UTheme.TEXT_FAINT;
+                fg     = enabled ? UTheme.TEXT : UTheme.TEXT_FAINT;
                 break;
             }
             case SUBTLE: {
@@ -48,7 +48,7 @@ public class UButton extends UComponent {
             }
             case GHOST:
             default: {
-                bg     = hovered ? UTheme.SURFACE : 0x00000000;
+                bg     = hovered ? UTheme.SURFACE : UTheme.TRANSPARENT;
                 border = hovered ? UTheme.BORDER_HOV : UTheme.BORDER;
                 fg     = enabled ? UTheme.TEXT : UTheme.TEXT_FAINT;
                 break;

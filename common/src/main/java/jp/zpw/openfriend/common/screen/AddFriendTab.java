@@ -18,7 +18,7 @@ public final class AddFriendTab implements FriendsOverlayScreen.Tab {
 
     public interface Actions {
         void search(String name, Consumer<SearchResult> callback);
-        void add(String name, Consumer<Boolean> ok);
+        void add(String name, Consumer<Throwable> result);
     }
 
     public static final class SearchResult {
@@ -98,13 +98,19 @@ public final class AddFriendTab implements FriendsOverlayScreen.Tab {
         if (state != State.FOUND || lastQuery.isEmpty()) return;
         String target = lastQuery;
         setState(State.SEARCHING, "Sending request to " + target + "…");
-        actions.add(target, ok -> {
-            if (Boolean.TRUE.equals(ok)) {
+        actions.add(target, err -> {
+            if (err == null) {
                 setState(State.SENT, "Request sent to " + target + ".");
                 input.setText("");
                 lastQuery = "";
             } else {
-                setState(State.ERROR, "Could not send request to " + target + ".");
+                String msg = err.getMessage();
+                if (msg == null || msg.isEmpty()) {
+                    msg = "Could not send request to " + target + ".";
+                } else if (msg.length() > 60) {
+                    msg = "Request rejected — click the notification for details.";
+                }
+                setState(State.ERROR, msg);
             }
         });
     }
