@@ -1,7 +1,7 @@
 {
   "required": true,
   "package": "jp.zpw.openfriend.mc.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_17",
   "minVersion": "0.8",
   "refmap": "openfriend.refmap.json",
   "client": [

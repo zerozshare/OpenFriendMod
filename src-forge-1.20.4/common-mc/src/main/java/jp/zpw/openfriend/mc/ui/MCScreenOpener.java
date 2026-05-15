@@ -1,8 +1,7 @@
 /*
  * OpenFriend — Copyright (c) 2026 ZSHARE. Licensed under the MIT License.
- * Variant for group-b (Minecraft 1.19 - 1.19.4): ConnectScreen.startConnecting
- * takes 4 args (quickPlay was added in 1.20); ServerData uses the
- * (String, String, boolean) constructor.
+ * Variant for group-c1b (Minecraft 1.20.2 - 1.20.4): ConnectScreen.startConnecting
+ * takes 5 args (TransferState was added in 1.21.2).
  */
 package jp.zpw.openfriend.mc.ui;
 
@@ -14,8 +13,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConnectScreen;
 import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.client.multiplayer.resolver.ServerAddress;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.HttpUtil;
 import net.minecraft.world.level.GameType;
 
@@ -76,13 +75,13 @@ public final class MCScreenOpener implements FriendsController.MultiplayBridge, 
         mc.setScreen(null);
         boolean ok = mc.getSingleplayerServer().publishServer(gameType, allowCheats, port);
         if (ok) {
-            sendChat(new TextComponent("[OpenFriend] ")
+            sendChat(Component.literal("[OpenFriend] ")
                     .withStyle(ChatFormatting.AQUA)
-                    .append(new TextComponent("Opened to LAN on port " + port + " (max " + maxPlayers + "). Bridging to your Friends list...")
+                    .append(Component.literal("Opened to LAN on port " + port + " (max " + maxPlayers + "). Bridging to your Friends list...")
                             .withStyle(ChatFormatting.WHITE)));
             onServerPublished(port);
         } else {
-            sendChat(new TextComponent("[OpenFriend] Failed to open to LAN (port " + port + ")")
+            sendChat(Component.literal("[OpenFriend] Failed to open to LAN (port " + port + ")")
                     .withStyle(ChatFormatting.RED));
         }
         return ok;
@@ -137,8 +136,10 @@ public final class MCScreenOpener implements FriendsController.MultiplayBridge, 
         if (mc == null || hostPort == null || hostPort.isEmpty()) return;
         mc.execute(() -> {
             try {
-                ServerData data = new ServerData("OpenFriend join", hostPort, false);
-                mc.setScreen(new ConnectScreen(null, mc, data));
+                mc.setScreen(null);
+                ServerAddress addr = ServerAddress.parseString(hostPort);
+                ServerData data = new ServerData("OpenFriend join", hostPort, ServerData.Type.OTHER);
+                ConnectScreen.startConnecting(null, mc, addr, data, false);
             } catch (Throwable t) {
                 OpenFriendMod.LOG.error("OpenFriend connect-to-local failed", t);
             }

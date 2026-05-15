@@ -1,0 +1,29 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+license = "MIT"
+issueTrackerURL = "https://github.com/zerozshare/OpenFriendMC/issues"
+
+[[mixins]]
+config = "openfriend.mixins.json"
+
+[[mods]]
+modId = "openfriend"
+version = "${file.jarVersion}"
+displayName = "OpenFriend"
+displayURL = "https://openfriend.net"
+authors = "ZSHARE"
+description = "Bridge the Minecraft Java Friends List (snapshot 26.2+) to any TCP server. Brings the Friends List UI to older Minecraft versions."
+
+[[dependencies.openfriend]]
+modId = "forge"
+mandatory = true
+versionRange = "[47,)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[dependencies.openfriend]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.17.1,)"
+ordering = "NONE"
+side = "CLIENT"

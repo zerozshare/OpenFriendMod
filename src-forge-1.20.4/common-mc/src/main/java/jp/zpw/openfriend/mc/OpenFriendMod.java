@@ -12,16 +12,16 @@ import jp.zpw.openfriend.mc.toast.ToastDispatcher;
 import jp.zpw.openfriend.mc.ui.MCScreenOpener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
 public final class OpenFriendMod {
 
     public static final String MOD_ID = "openfriend";
-    public static final String MOD_VERSION = "1.0.0";
-    public static final Logger LOG = LogManager.getLogger("openfriend");
+    public static final String MOD_VERSION = "1.0.3";
+    public static final Logger LOG = LoggerFactory.getLogger("openfriend");
 
     private static volatile boolean bootstrapped;
     private static volatile IpcClient ipcClient;
@@ -39,12 +39,11 @@ public final class OpenFriendMod {
     private static UUID resolveProfileId(User user) {
         if (user == null) return null;
         try {
-            com.mojang.authlib.GameProfile p = user.getGameProfile();
-            if (p != null) return p.getId();
+            return user.getProfileId();
         } catch (Throwable t) {
-            LOG.warn("getGameProfile() failed: {}", t.getMessage());
+            LOG.warn("getProfileId() failed: {}", t.getMessage());
+            return null;
         }
-        return null;
     }
 
     private static void handOffMinecraftSessionOrSignIn(IpcClient ipc, FriendsState s) {
@@ -52,6 +51,11 @@ public final class OpenFriendMod {
         User user = mc != null ? mc.getUser() : null;
         String token = user != null ? user.getAccessToken() : null;
         UUID profileId = resolveProfileId(user);
+        LOG.info("OpenFriend launcher session probe: userClass={} name={} tokenLen={} profileId={}",
+                user == null ? "null" : user.getClass().getName(),
+                user == null ? "null" : String.valueOf(user.getName()),
+                token == null ? -1 : token.length(),
+                profileId);
 
         if (token != null && !token.isEmpty() && profileId != null) {
             String name = user.getName();
@@ -66,15 +70,15 @@ public final class OpenFriendMod {
                     s.primeFromList(ipc);
                     probeFriendsList(ipc);
                     ipc.requestAsync("presence.set", IpcClient.params("status", "ONLINE"));
-                    ipc.requestAsync("presence.watch", IpcClient.params("intervalSeconds", 12));
+                    ipc.requestAsync("presence.watch", IpcClient.params("intervalSeconds", 60));
                 } else {
                     LOG.warn("OpenFriend: Core rejected Minecraft session ({}); falling back to device-code", err.getMessage());
-                    triggerDeviceCodeSignIn(ipc, s);
+                    triggerDeviceCodeSignIn(ipc, s, profileId);
                 }
             });
         } else {
-            LOG.info("OpenFriend: no Minecraft session available; using device-code sign-in");
-            triggerDeviceCodeSignIn(ipc, s);
+            LOG.info("OpenFriend: no Minecraft session available; using device-code sign-in (expected profileId={})", profileId);
+            triggerDeviceCodeSignIn(ipc, s, profileId);
         }
     }
 
@@ -91,10 +95,20 @@ public final class OpenFriendMod {
         });
     }
 
-    private static void triggerDeviceCodeSignIn(IpcClient ipc, FriendsState s) {
-        ipc.requestAsync("auth.signIn", null).whenComplete((result, err) -> {
-            if (err == null) s.primeFromList(ipc);
-            else LOG.warn("OpenFriend sign-in did not complete: {}", err.getMessage());
+    private static void triggerDeviceCodeSignIn(IpcClient ipc, FriendsState s, UUID expectedProfileId) {
+        JsonObject params = null;
+        if (expectedProfileId != null) {
+            params = IpcClient.params("expectedProfileId", expectedProfileId.toString());
+        }
+        ipc.requestAsync("auth.signIn", params).whenComplete((result, err) -> {
+            if (err == null) {
+                s.primeFromList(ipc);
+                probeFriendsList(ipc);
+                ipc.requestAsync("presence.set", IpcClient.params("status", "ONLINE"));
+                ipc.requestAsync("presence.watch", IpcClient.params("intervalSeconds", 60));
+            } else {
+                LOG.warn("OpenFriend sign-in did not complete: {}", err.getMessage());
+            }
         });
     }
 
